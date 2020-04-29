@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix,zero_one_loss
+from sklearn.metrics import confusion_matrix,zero_one_loss, roc_curve, auc, precision_recall_curve
 from os import chdir
 from time import time
 
@@ -26,20 +26,63 @@ def draw_confusion_matrix(results):
     plt.show()
     return
 
+def draw_curves(attacks,test_labels,probabilities):
+    test_labels_binary = []
+    label_score = []
+    for n in range(len(test_labels)):
+        label = test_labels[n]
+        label_score.append(sum(probabilities[n,:])-probabilities[n,0]) #sum probabilities of all attack categories excluding normal
+        if attacks[label] == 'Normal':
+            assert (label == 0) #check that the label for normal is 0
+            test_labels_binary.append(0)
+        else:
+            test_labels_binary.append(1)
+
+    test_labels_binary = np.array(test_labels_binary)
+    label_score = np.array(label_score)
+    fpr, tpr, thresholds = roc_curve(test_labels_binary, label_score, pos_label=1)
+    roc_auc = auc(fpr, tpr)
+    precision, recall, thresholds_precision_recall = precision_recall_curve(test_labels_binary, 
+    label_score, pos_label=1)
+    auc_pr = auc(recall, precision)
+    plt.figure()
+    plt.plot(fpr, tpr, label='AUC = %0.6f' % (roc_auc))
+    plt.xlabel('False Positive Rate (1-specificity)')
+    plt.ylabel('True Positive Rate (sensitivity)')
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.title('Receiver Operating Characteristic (ROC) curve (for detecting attacks of any kind)')
+    plt.legend(loc="lower right", prop={'size': 'small'})
+    plt.savefig('ROC curve for neural network.png')
+    plt.savefig('ROC curve for neural network.pdf')
+    plt.show()
+    plt.figure()
+    plt.plot(recall, precision, label='AUC = %0.6f' % (auc_pr))
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.title('Precision Recall curve (for detecting attacks of any kind)')
+    plt.legend(loc="lower right", prop={'size': 'small'})
+    plt.savefig('Precision Recall curve for neural network.png')
+    plt.savefig('Precision Recall curve for neural network.pdf')
+    plt.show()
+    return
+
 def train_model(train_features,train_labels):
     # Initialise classifier and train model
     start = time()
-    classifier = RandomForestClassifier(n_jobs=-1,random_state=42,n_estimators=1000)
+    classifier = RandomForestClassifier(n_jobs=-1,random_state=42,n_estimators=250,max_depth=32)
     print('Training Model...')
     model = classifier.fit(train_features,train_labels)
     print('Training Complete in ' + str(round(time()-start,2)) + ' seconds...')
     return model
 
 def main():
-    chdir('/home/zack/Desktop/AIdataERS4M')                         # Change to data directory
+    chdir('/home/zack/Desktop/Machine-Learning-CMP417') # Change to data directory
 
-    train_filepath = 'UNSW_NB15_training-set-ERS4M.csv'
-    test_filepath = 'UNSW_NB15_testing-set-ERS4M.csv'
+    train_filepath = 'AIdataERS4M/UNSW_NB15_training-set-ERS4M.csv'
+    test_filepath = 'AIdataERS4M/UNSW_NB15_testing-set-ERS4M.csv'
 
     print('Reading Data...')
     train_data = pd.read_csv(train_filepath)
@@ -71,7 +114,7 @@ def main():
     print('Test Attack Labels: ' + str(test_labels.shape))
 
     model = train_model(train_features,train_labels)
-    print('Score: ' + str(model.score(train_features,train_labels)))
+    print('Score: ', round((model.score(train_features,train_labels)*100),2),'%')
     predictions = model.predict(test_features)
     
     #Performance Metrics
@@ -81,13 +124,16 @@ def main():
             correct += 1
 
     accuracy = (correct/test_labels.shape[0])*100
-    print('Accuracy:', round(accuracy, 2), '%.')
+    print('Model Accuracy Against Test Data: ', round(accuracy, 2), '%')
 
     results = confusion_matrix(predictions,test_labels,labels=[i for i in range(len(attacks))])
     error = zero_one_loss(test_labels, predictions)
     # By definition, entry i,j in a confusion matrix is the number of observations actually in group i, but predicted to be in group j
     print ("Error: ", error)
-    #draw_confusion_matrix(results)
+    draw_confusion_matrix(results)
+
+    probabilities = model.predict_proba(test_features)
+    draw_curves(attacks,test_labels,probabilities)
     
 if __name__ == '__main__':
     main()
