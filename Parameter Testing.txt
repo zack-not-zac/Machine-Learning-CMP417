@@ -1,0 +1,40 @@
+Testing Parameters...
+Best parameters are: {'max_depth': 32, 'n_estimators': 250}
+
+
+0.652 + or -0.025 for the {'max_depth': 2, 'n_estimators': 5}
+0.634 + or -0.035 for the {'max_depth': 2, 'n_estimators': 10}
+0.632 + or -0.037 for the {'max_depth': 2, 'n_estimators': 50}
+0.636 + or -0.035 for the {'max_depth': 2, 'n_estimators': 100}
+0.642 + or -0.028 for the {'max_depth': 2, 'n_estimators': 250}
+0.641 + or -0.028 for the {'max_depth': 2, 'n_estimators': 1000}
+0.735 + or -0.016 for the {'max_depth': 4, 'n_estimators': 5}
+0.739 + or -0.011 for the {'max_depth': 4, 'n_estimators': 10}
+0.73 + or -0.01 for the {'max_depth': 4, 'n_estimators': 50}
+0.73 + or -0.012 for the {'max_depth': 4, 'n_estimators': 100}
+0.736 + or -0.01 for the {'max_depth': 4, 'n_estimators': 250}
+0.738 + or -0.012 for the {'max_depth': 4, 'n_estimators': 1000}
+0.788 + or -0.017 for the {'max_depth': 8, 'n_estimators': 5}
+0.795 + or -0.014 for the {'max_depth': 8, 'n_estimators': 10}
+0.793 + or -0.017 for the {'max_depth': 8, 'n_estimators': 50}
+0.793 + or -0.017 for the {'max_depth': 8, 'n_estimators': 100}
+0.793 + or -0.016 for the {'max_depth': 8, 'n_estimators': 250}
+0.792 + or -0.016 for the {'max_depth': 8, 'n_estimators': 1000}
+0.818 + or -0.029 for the {'max_depth': 16, 'n_estimators': 5}
+0.821 + or -0.026 for the {'max_depth': 16, 'n_estimators': 10}
+0.827 + or -0.024 for the {'max_depth': 16, 'n_estimators': 50}
+0.828 + or -0.024 for the {'max_depth': 16, 'n_estimators': 100}
+0.829 + or -0.024 for the {'max_depth': 16, 'n_estimators': 250}
+0.829 + or -0.024 for the {'max_depth': 16, 'n_estimators': 1000}
+0.819 + or -0.028 for the {'max_depth': 32, 'n_estimators': 5}
+0.829 + or -0.027 for the {'max_depth': 32, 'n_estimators': 10}
+0.835 + or -0.028 for the {'max_depth': 32, 'n_estimators': 50}
+0.835 + or -0.028 for the {'max_depth': 32, 'n_estimators': 100}
+0.836 + or -0.028 for the {'max_depth': 32, 'n_estimators': 250}
+0.836 + or -0.028 for the {'max_depth': 32, 'n_estimators': 1000}
+0.82 + or -0.028 for the {'max_depth': None, 'n_estimators': 5}
+0.829 + or -0.027 for the {'max_depth': None, 'n_estimators': 10}
+0.835 + or -0.027 for the {'max_depth': None, 'n_estimators': 50}
+0.836 + or -0.028 for the {'max_depth': None, 'n_estimators': 100}
+0.836 + or -0.027 for the {'max_depth': None, 'n_estimators': 250}
+0.836 + or -0.028 for the {'max_depth': None, 'n_estimators': 1000}
