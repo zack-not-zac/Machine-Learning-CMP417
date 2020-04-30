@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix,zero_one_loss, roc_curve, auc, precision_recall_curve
+from sklearn.metrics import confusion_matrix,zero_one_loss, roc_curve, auc, precision_recall_curve, accuracy_score
 from os import chdir
 from time import time
 
@@ -90,7 +90,7 @@ def main():
     test_data = pd.read_csv(test_filepath)
     print('Test Data: {} entries with {} elements.'.format(*test_data.shape))
 
-    print('\nConverting Data...')
+    print('\nTransforming Data...')
 
     train_length = train_data.shape[0]                              # Gets length of train data for later
 
@@ -118,11 +118,14 @@ def main():
     predictions = model.predict(test_features)
     
     #Performance Metrics
+    correct = 0
     TP = 0
     TN = 0
     FP = 0
     FN = 0
     for prediction,actual in zip(predictions,test_labels):
+        if prediction == actual:
+            correct += 1
         if attacks[actual] == 'Normal':             # If packet was classified Normal
             if attacks[prediction] != 'Normal':     # If packet was predicted as Attack
                 FP += 1                             # Add 1 to False Positive
@@ -135,10 +138,10 @@ def main():
                 TP += 1                             # Else add 1 to True Positive
 
     print("\nConfusion Matrix for True & False Positives and Negatives")
-    print("P | " + str(TP) + " |" + str(FP))
-    print("N | " + str(TN) + "  |" + str(FN))
-    print("--|" + "-"*(len("P | " + str(TP) + "  " + str(FP))-3))
-    print("  | T      | F\n")
+    print("Negative | " + str(TN) + "  |" + str(FN))
+    print("Positive | " + str(FP) + " |" + str(TP))
+    print("-"*(len("P | " + str(TP) + "  " + str(FP))))
+    print("  | Pred. Neg | Pred. Pos\n")
 
     TPR = TP/(TP+FN)
     FPR = FP/(FP+TN)
@@ -146,8 +149,11 @@ def main():
     print('TPR: ',TPR)
     print('FPR: ',FPR) 
 
-    accuracy = ((TP+TN)/(TP+TN+FP+FN))*100
-    print('Model Accuracy Against Test Data: ', round(accuracy, 2), '%')
+    accuracy = (correct/test_labels.shape[0])*100
+    print('Model Accuracy: ', round(accuracy,2),'%')
+
+    b_accuracy = ((TP+TN)/(TP+TN+FP+FN))*100
+    print('Binary Accuracy: ', round(b_accuracy, 2), '%')
 
     results = confusion_matrix(predictions,test_labels,labels=[i for i in range(len(attacks))])
     error = zero_one_loss(test_labels, predictions)
