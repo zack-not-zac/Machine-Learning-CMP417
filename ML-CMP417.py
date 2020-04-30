@@ -120,9 +120,29 @@ def main():
     
     #Performance Metrics
     correct = 0
+    TP = 0
+    TN = 0
+    FP = 0
+    FN = 0
     for prediction,actual in zip(predictions,test_labels):
         if prediction == actual:
             correct += 1
+        if attacks[actual] == 'Normal':             # If packet was classified Normal
+            if attacks[prediction] == 'Normal':     # If packet was predicted as Normal
+                TN += 1                             # Add 1 to True Negative
+            else:
+                FN += 1                             # Else Add 1 to False Negative
+        elif attacks[actual] != 'Normal':           # If packet was classified as an attack packet
+            if attacks[prediction] != 'Normal':     # If packet was predicted as an attack packet
+                TP += 1                             # Add 1 to True Positive
+            else:
+                FP += 1                             # Else add 1 to False Positive
+
+    print("\nConfusion Matrix for True & False Positives and Negatives")
+    print("P | " + str(TP) + " |" + str(FP))
+    print("N | " + str(TN) + "  |" + str(FN))
+    print("--|" + "-"*(len("P | " + str(TP) + "  " + str(FP))-3))
+    print("  | T      | F\n")
 
     accuracy = (correct/test_labels.shape[0])*100
     print('Model Accuracy Against Test Data: ', round(accuracy, 2), '%')
@@ -130,11 +150,11 @@ def main():
     results = confusion_matrix(predictions,test_labels,labels=[i for i in range(len(attacks))])
     error = zero_one_loss(test_labels, predictions)
     # By definition, entry i,j in a confusion matrix is the number of observations actually in group i, but predicted to be in group j
-    # print ("Error: ", error)
-    # draw_confusion_matrix(results)
+    print ("Error: ", error)
+    draw_confusion_matrix(results)
 
-    # probabilities = model.predict_proba(test_features)
-    # draw_curves(attacks,test_labels,probabilities)
+    probabilities = model.predict_proba(test_features)
+    draw_curves(attacks,test_labels,probabilities)
     
 if __name__ == '__main__':
     main()
