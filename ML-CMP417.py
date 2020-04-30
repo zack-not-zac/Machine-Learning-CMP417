@@ -52,7 +52,7 @@ def draw_curves(attacks,test_labels,probabilities):
     plt.ylabel('True Positive Rate (sensitivity)')
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
-    plt.title('Receiver Operating Characteristic (ROC) curve (for detecting attacks of any kind)')
+    plt.title('Receiver Operating Characteristic (ROC) curve\n(for detecting attacks of any kind)')
     plt.legend(loc="lower right", prop={'size': 'small'})
     plt.savefig('ROC curve for neural network.png')
     plt.savefig('ROC curve for neural network.pdf')
@@ -68,6 +68,9 @@ def draw_curves(attacks,test_labels,probabilities):
     plt.savefig('Precision Recall curve for neural network.png')
     plt.savefig('Precision Recall curve for neural network.pdf')
     plt.show()
+    return
+
+def draw_recall_ROC_curves(TPR,FPR):
     return
 
 def train_model(train_features,train_labels):
@@ -128,21 +131,27 @@ def main():
         if prediction == actual:
             correct += 1
         if attacks[actual] == 'Normal':             # If packet was classified Normal
-            if attacks[prediction] == 'Normal':     # If packet was predicted as Normal
-                TN += 1                             # Add 1 to True Negative
+            if attacks[prediction] != 'Normal':     # If packet was predicted as Attack
+                FP += 1                             # Add 1 to False Positive
             else:
-                FN += 1                             # Else Add 1 to False Negative
+                TN += 1                             # Else Add 1 to True Negative
         elif attacks[actual] != 'Normal':           # If packet was classified as an attack packet
-            if attacks[prediction] != 'Normal':     # If packet was predicted as an attack packet
-                TP += 1                             # Add 1 to True Positive
+            if attacks[prediction] == 'Normal':     # If packet was predicted as a normal packet
+                FN += 1                             # Add 1 to False Negative
             else:
-                FP += 1                             # Else add 1 to False Positive
+                TP += 1                             # Else add 1 to True Positive
 
     print("\nConfusion Matrix for True & False Positives and Negatives")
     print("P | " + str(TP) + " |" + str(FP))
     print("N | " + str(TN) + "  |" + str(FN))
     print("--|" + "-"*(len("P | " + str(TP) + "  " + str(FP))-3))
     print("  | T      | F\n")
+
+    TPR = TP/(TP+FN)
+    FPR = FP/(FP+TN)
+
+    print('TPR: ',TPR)
+    print('FPR: ',FPR) 
 
     accuracy = (correct/test_labels.shape[0])*100
     print('Model Accuracy Against Test Data: ', round(accuracy, 2), '%')
