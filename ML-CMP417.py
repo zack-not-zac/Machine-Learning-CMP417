@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix,zero_one_loss, roc_curve, auc, precision_recall_curve
 from os import chdir
 from time import time
-from random import randint
 
 def draw_confusion_matrix(results):
     # Visualize confusion matrix
@@ -70,13 +69,10 @@ def draw_curves(attacks,test_labels,probabilities):
     plt.show()
     return
 
-def draw_recall_ROC_curves(TPR,FPR):
-    return
-
 def train_model(train_features,train_labels):
     # Initialise classifier and train model
     start = time()
-    classifier = RandomForestClassifier(n_jobs=-1,random_state=randint(0,100),n_estimators=250,max_depth=32)
+    classifier = RandomForestClassifier(n_jobs=-1,random_state=49,n_estimators=250,max_depth=32)
     print('Training Model...')
     model = classifier.fit(train_features,train_labels)
     print('Training Complete in ' + str(round(time()-start,2)) + ' seconds...')
@@ -122,14 +118,11 @@ def main():
     predictions = model.predict(test_features)
     
     #Performance Metrics
-    correct = 0
     TP = 0
     TN = 0
     FP = 0
     FN = 0
     for prediction,actual in zip(predictions,test_labels):
-        if prediction == actual:
-            correct += 1
         if attacks[actual] == 'Normal':             # If packet was classified Normal
             if attacks[prediction] != 'Normal':     # If packet was predicted as Attack
                 FP += 1                             # Add 1 to False Positive
@@ -153,7 +146,7 @@ def main():
     print('TPR: ',TPR)
     print('FPR: ',FPR) 
 
-    accuracy = (correct/test_labels.shape[0])*100
+    accuracy = ((TP+TN)/(TP+TN+FP+FN))*100
     print('Model Accuracy Against Test Data: ', round(accuracy, 2), '%')
 
     results = confusion_matrix(predictions,test_labels,labels=[i for i in range(len(attacks))])
