@@ -6,12 +6,12 @@ from sklearn.metrics import confusion_matrix,zero_one_loss
 from os import chdir
 
 def main():
-    chdir('/home/zack/Desktop/AIdataERS4M')                         # Change to data directory
+    chdir('/home/zack/Desktop/Machine-Learning-CMP417')                         # Change to data directory
 
     print('Reading Data...')
-    train_data = pd.read_csv('UNSW_NB15_training-set-ERS4M.csv')
+    train_data = pd.read_csv('AIdataERS4M/UNSW_NB15_training-set-ERS4M.csv')
     print('Train Data: {} entries with {} elements.'.format(*train_data.shape))
-    test_data = pd.read_csv('UNSW_NB15_testing-set-ERS4M.csv')
+    test_data = pd.read_csv('AIdataERS4M/UNSW_NB15_testing-set-ERS4M.csv')
     print('Test Data: {} entries with {} elements.'.format(*test_data.shape))
 
     print('\nConverting Data...')
@@ -39,7 +39,7 @@ def main():
     print('Test Attack Labels: ' + str(test_labels.shape))
 
     # Initialise classifier and train model
-    classifier = RandomForestClassifier(n_jobs=-1,random_state=42)
+    classifier = RandomForestClassifier(n_jobs=-1,random_state=49,n_estimators=250,max_depth=32)
     print('Training Model...')
     model = classifier.fit(train_features,train_labels)
     print('Score: ' + str(model.score(train_features,train_labels)))
