@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix,zero_one_loss, roc_curve, auc, precision_recall_curve
 from os import chdir
 from time import time
+from random import randint
 
 def draw_confusion_matrix(results):
     # Visualize confusion matrix
@@ -72,7 +73,7 @@ def draw_curves(attacks,test_labels,probabilities):
 def train_model(train_features,train_labels):
     # Initialise classifier and train model
     start = time()
-    classifier = RandomForestClassifier(n_jobs=-1,random_state=42,n_estimators=250,max_depth=32)
+    classifier = RandomForestClassifier(n_jobs=-1,random_state=randint(0,100),n_estimators=250,max_depth=32)
     print('Training Model...')
     model = classifier.fit(train_features,train_labels)
     print('Training Complete in ' + str(round(time()-start,2)) + ' seconds...')
@@ -129,11 +130,11 @@ def main():
     results = confusion_matrix(predictions,test_labels,labels=[i for i in range(len(attacks))])
     error = zero_one_loss(test_labels, predictions)
     # By definition, entry i,j in a confusion matrix is the number of observations actually in group i, but predicted to be in group j
-    print ("Error: ", error)
-    draw_confusion_matrix(results)
+    # print ("Error: ", error)
+    # draw_confusion_matrix(results)
 
-    probabilities = model.predict_proba(test_features)
-    draw_curves(attacks,test_labels,probabilities)
+    # probabilities = model.predict_proba(test_features)
+    # draw_curves(attacks,test_labels,probabilities)
     
 if __name__ == '__main__':
     main()
