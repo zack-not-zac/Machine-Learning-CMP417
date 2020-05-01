@@ -96,6 +96,9 @@ def main():
 
     df = pd.concat([train_data,test_data])                          # Data is concatenated to prevent unknown protocols
     df['attack_cat'], attacks = pd.factorize(df['attack_cat'])      # Encode Attack Category
+    print('Decoded Attacks:')
+    for i,attack in enumerate(attacks):
+        print(i,attack)
     # Split attack labels back into train and test data
     train_labels = df['attack_cat'][:train_length]                  
     test_labels = df['attack_cat'][train_length:]
@@ -108,7 +111,7 @@ def main():
     test_features = dummies[train_length:].to_numpy()
 
     # Print feature & label shapes for both datasets
-    print('Train Features: ' + str(train_features.shape))
+    print('\nTrain Features: ' + str(train_features.shape))
     print('Train Attack Labels: ' + str(train_labels.shape))
     print('Test Features: ' + str(test_features.shape))
     print('Test Attack Labels: ' + str(test_labels.shape))
